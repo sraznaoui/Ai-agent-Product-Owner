@@ -1,0 +1,695 @@
+{
+  "name": "AI Agent Priorization",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "7dd594d9-81ba-44a4-b61a-f7c6eb179c28",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        20,
+        140
+      ],
+      "id": "564c4108-8b10-419c-805c-323910f9354f",
+      "name": "Webhook",
+      "webhookId": "7dd594d9-81ba-44a4-b61a-f7c6eb179c28"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "base": {
+          "__rl": true,
+          "value": "appdbdWixyLMElhAH",
+          "mode": "list",
+          "cachedResultName": "AI Product Owner",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblRcTdX1LCY485J8",
+          "mode": "list",
+          "cachedResultName": "Projet",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH/tblRcTdX1LCY485J8"
+        },
+        "id": "={{ $json.query.ProjectId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        140
+      ],
+      "id": "b46ad173-2d84-43aa-943e-745646b5b972",
+      "name": "Airtable",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "0CVaF9yaQwiPqAsW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "Backlog",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        460,
+        140
+      ],
+      "id": "bb002f4c-5f0a-48b9-920f-3d6888f03261",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "base": {
+          "__rl": true,
+          "value": "appdbdWixyLMElhAH",
+          "mode": "list",
+          "cachedResultName": "AI Product Owner",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblpewF69e3tIQmob",
+          "mode": "list",
+          "cachedResultName": "Backlog",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH/tblpewF69e3tIQmob"
+        },
+        "id": "={{ $json.Backlog }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        140
+      ],
+      "id": "74720708-7455-4765-84bc-24edf69a89ef",
+      "name": "Airtable1",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "0CVaF9yaQwiPqAsW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": "={{ 1 }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        140
+      ],
+      "id": "2dbcbdf1-c9ea-4852-9e03-39ebb1e97aad",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Aide moi à prioriser cette feauture {{ $json.Description }} \n\nvoici les critères d'acceptations : {{ $json['Critères d\\'acceptation'] }}\n\nVoici la vision du produit : \n{{ $json['Vision Produit'] }}\n\nDans ta réponse rappelle l'ID : {{ $json.id }}\n\nDans une autre case explique le pourquoi du comment de cette priorisation.\n\nDonne moi l'estimation du \"R\" et du \"I\" de la méthode RICE, je veux uniquement un nombre allant de 0 à 100\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# Rôle \nTu es un product owner expert, ton rôle c'est d'utiliser la méthode MoSCoW + La méthode RICE pour prioriser les features d'un produit.\n\n## Résultat attendu MoSCoW: \n\nTu dois me sortir un de ces quatres état en JSON : \n\nMust-have\nShould-have\nCould-have\nWill not have\n\n### Specification MoSCoW : \n\nTu dois être très strict et pas optimiste dans la priorisation.\n\nPrends en compte la complexité ( défini avec la méthode t Shirt Sizing ) pour savoir quoi prioriser :\n\n Voici l'estimation de la compléxité -> {{ $json['Complexité Estimation'] }}\n\n\n## Résultat attendu RICE : \n\nEstime que le \"R\" et le \"I\" laisse le \"C\" et le \"E\" à l'utilisateur.\n\n\n\n\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1340,
+        240
+      ],
+      "id": "6b6a7de7-d899-4220-afc5-54b0f3424fa3",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"MoSCoW\": \"\",\n  \"id\" : \"\",\n  \"Explication\" : \"\",\n  \"R\":\"\",\n  \"I\" :\"\"\n  \n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1488,
+        460
+      ],
+      "id": "ce4457b0-3875-4713-ac63-4afe8742185d",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1368,
+        460
+      ],
+      "id": "2dff96dc-7c48-4443-bd25-39c2c1175d3b",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "nEUxMYfTBw9JTeMf",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5c15d3f4-33f8-4e24-999d-4614d398cf06",
+              "name": "Vision Produit",
+              "value": "={{ $('Airtable').item.json['Vision Produit'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b2e1ed32-366e-4b29-ad3c-fc0f8f9a16d6",
+              "name": "Type",
+              "value": "={{ $json.Titre }}",
+              "type": "string"
+            },
+            {
+              "id": "601b0888-bc71-44db-877e-2fe3ce7fbd2d",
+              "name": "Description",
+              "value": "={{ $json.Description }}",
+              "type": "string"
+            },
+            {
+              "id": "f728c424-bf94-4182-b3b3-0f1ccb222983",
+              "name": "Critères d'acceptation",
+              "value": "={{ $json['Critères d\\'acceptation'] }}",
+              "type": "string"
+            },
+            {
+              "id": "34af19ac-f853-4547-a8a8-79af4d82e82a",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "236ea675-6f59-4972-8b87-e130c960de16",
+              "name": "Complexité Estimation",
+              "value": "={{ $json['Complexité Estimation'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        140
+      ],
+      "id": "484f086a-b165-48f4-984c-66810d8228cd",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// On récupère tous les items\nlet items = $input.all();\n\n// On reformate chaque item pour sortir la donnée \"output\"\nlet results = items.map(item => {\n  return {\n    json: item.json.output\n  };\n});\n\nreturn results;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        0
+      ],
+      "id": "865158fd-1947-424b-b6ad-d0b53aeaa9b1",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appdbdWixyLMElhAH",
+          "mode": "list",
+          "cachedResultName": "AI Product Owner",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblpewF69e3tIQmob",
+          "mode": "list",
+          "cachedResultName": "Backlog",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH/tblpewF69e3tIQmob"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MoSCoW": "={{ $json.MoSCoW }}",
+            "Explication priorisation": "={{ $json.Explication }}",
+            "id": "={{ $json.id }}",
+            "I": "={{ $json.I }}",
+            "R": "={{ $json.R }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Titre",
+              "displayName": "Titre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet_Liée",
+              "displayName": "Projet_Liée",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "UserStory",
+                  "value": "UserStory"
+                },
+                {
+                  "name": "Bug",
+                  "value": "Bug"
+                },
+                {
+                  "name": "Tech Task",
+                  "value": "Tech Task"
+                },
+                {
+                  "name": "Feature Request",
+                  "value": "Feature Request"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Critères d'acceptation",
+              "displayName": "Critères d'acceptation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Complexité Estimation",
+              "displayName": "Complexité Estimation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "XS",
+                  "value": "XS"
+                },
+                {
+                  "name": "S",
+                  "value": "S"
+                },
+                {
+                  "name": "M",
+                  "value": "M"
+                },
+                {
+                  "name": "L",
+                  "value": "L"
+                },
+                {
+                  "name": "XL",
+                  "value": "XL"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date Creation",
+              "displayName": "Date Creation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Généré par l'IA",
+              "displayName": "Généré par l'IA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Oui",
+                  "value": "Oui"
+                },
+                {
+                  "name": "Non",
+                  "value": "Non"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Revu par un PO",
+              "displayName": "Revu par un PO",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Oui",
+                  "value": "Oui"
+                },
+                {
+                  "name": "Non",
+                  "value": "Non"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "MoSCoW",
+              "displayName": "MoSCoW",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Must-have",
+                  "value": "Must-have"
+                },
+                {
+                  "name": "Should-have",
+                  "value": "Should-have"
+                },
+                {
+                  "name": "Could-have",
+                  "value": "Could-have"
+                },
+                {
+                  "name": "Will not have",
+                  "value": "Will not have"
+                },
+                {
+                  "name": "A traiter",
+                  "value": "A traiter"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Explication priorisation",
+              "displayName": "Explication priorisation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "R",
+              "displayName": "R",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "I",
+              "displayName": "I",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "C",
+              "displayName": "C",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "E",
+              "displayName": "E",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "RICE Estimation",
+              "displayName": "RICE Estimation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1500,
+        0
+      ],
+      "id": "bc89a01e-ffca-4f93-b06a-374922c8f799",
+      "name": "Airtable2",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "0CVaF9yaQwiPqAsW",
+          "name": "Airtable account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Airtable1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Airtable2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "80c72fcd-2c91-4cf8-a08a-a0f8d1b5808b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1148135d8af09935f1fbc9043e7cde1c4aacf716a7ce6f442c7af6891f4db26e"
+  },
+  "id": "qXPMBQqiqZWNCeEx",
+  "tags": []
+}
