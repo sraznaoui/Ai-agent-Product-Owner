@@ -17,7 +17,7 @@ L’ensemble est propulsé par **n8n** et **OpenAI**, avec une interface piloté
 
 ### 🧩 Stack Technique
 - `n8n` – Moteur d’orchestration no-code
-- `Airtable` – Front-end léger, base de données collaborative et formulaire de feedbakcs clients.
+- `Airtable` – Front-end léger, base de données collaborative et formulaire de feedbakcs clients. voici l'accès à la base donné https://airtable.com/appdbdWixyLMElhAH/shrX1YU7wWhg9DkuJ
 - `OpenAI API` – Intelligence de génération et d’analyse
 - `Gmail` – Source de données pour les feedbacks clients
 
@@ -51,10 +51,28 @@ Ici on lance le process de "Assisted Writing"
 
 ![image](https://github.com/user-attachments/assets/fd6a2fe1-d05b-4008-bf6e-9d75818330ce)
 
+L'automation via Script sur Airtable :
+
+![image](https://github.com/user-attachments/assets/4f085b61-994a-4968-804e-c2c53bdc1340)
+
+
+Le Script Airtable pour déclencher le workflow de n8n : 
+
+![image](https://github.com/user-attachments/assets/f83792c2-fa73-4314-b237-d55c233fd6a2)
+
+
+
 
 Ici le workflow : 
 
 ![image](https://github.com/user-attachments/assets/75fa5f9f-c864-49ff-ad5c-37e658506ac0)
+
+
+
+Dès que le workflow est terminé le PO en charge du projet reçoit un mail de confirmation : 
+
+![image](https://github.com/user-attachments/assets/6522dc03-4008-4202-b76b-cb618d3aef0d)
+
 
 
 
@@ -66,6 +84,8 @@ Ici le résultat :
 ![image](https://github.com/user-attachments/assets/7b9f9659-1aa6-4ec5-93f0-fbb9bbcf85ad)
 
 
+* Note importante : pour ne pas mettre en erreur le PO j'ai mis deux cases pour prévenir comme quoi la user story a été créée par l'IA et une case pour confirmer que cela a été vérifié par le PO
+
 ---
 
 ### 2. 🚦 Priorisation intelligente du backlog
@@ -76,6 +96,8 @@ Fonctions :
 - Application stricte de la méthode **MoSCoW** (via LLM)
 - Estimation de **Reach** & **Impact** (RICE)
 - Explication contextuelle de la priorité attribuée
+
+  * Note important : le C & le E de RICE ne peut pas être délégué à l'IA car il s'agit d'une estimation subjective du PO et de son équipe de développement donc je laisse le remplissage de cette donné au PO
 
 📌 `(https://airtable.com/appdbdWixyLMElhAH/shrruPyt9kQdQP9rm)`
 
