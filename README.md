@@ -79,7 +79,13 @@ Fonctions :
 
 📌 `(https://airtable.com/appdbdWixyLMElhAH/shrruPyt9kQdQP9rm)`
 
-📸 *[INSÉRER IMAGE : sortie RICE ou classement backlog]*
+![image](https://github.com/user-attachments/assets/801aa64f-9906-46e0-a507-6f3d3106b8a0)
+
+
+Ici le résultat : 
+
+![image](https://github.com/user-attachments/assets/080f0798-dfbc-498f-8e78-9909e3c77027)
+
 
 ---
 
@@ -91,10 +97,11 @@ Fonctions :
 - Classification sémantique stricte : `Bug`, `Feature Request`, `Feedback`, ou `Hors Sujet`
 - Extraction des données clés (contact, projet, contenu)
 - Intégration dans la table **Feedbacks**
+- Intégration des Feedbacks via Formulaire donné aux clients 
 
 📌 `[Lien Airtable à insérer – Feedback]`
 
-📸 *[INSÉRER IMAGE : ligne analysée dans Airtable]*
+
 
 ---
 
