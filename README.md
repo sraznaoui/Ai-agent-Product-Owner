@@ -6,7 +6,7 @@ Ce projet a été conçu comme un agent intelligent au service des Product Owner
 🛠 Il orchestre trois missions fondamentales :
 
 - ✍️ Générer des **User Stories** enrichies (titre, description, critères, complexité)
-- 🚦 Prioriser les éléments du backlog via les frameworks **MoSCoW** & **RICE** (Reach & Impact uniquement)
+- 🚦 Prioriser les éléments du backlog via les frameworks **MoSCoW** & **RICE** 
 - 📬 Classifier automatiquement les mails entrants en **Bug**, **Feature Request** ou **Feedback**.
 
 L’ensemble est propulsé par **n8n** et **OpenAI**, avec une interface pilotée via **Airtable**.
