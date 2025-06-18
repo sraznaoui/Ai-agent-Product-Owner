@@ -1,162 +1,147 @@
 # 🤖 AI-Agent Product Owner
 
 ## 🧭 Présentation Générale
-Ce projet a été conçu comme un agent intelligent au service des Product Owners d’une plateforme SaaS de gestion de projet. L’objectif : soulager le PO de la surcharge opérationnelle.
 
-🛠 Il orchestre trois missions fondamentales :
+Ce projet est un **agent intelligent** conçu pour assister les Product Owners d’une plateforme SaaS de gestion de projet.  
+🎯 Objectif : décharger le PO des tâches répétitives et lui offrir une **supervision augmentée** de son backlog.
 
-- ✍️ Générer des **User Stories** enrichies (titre, description, critères, complexité)
-- 🚦 Prioriser les éléments du backlog via les frameworks **MoSCoW** & **RICE** 
-- 📬 Classifier automatiquement les mails entrants en **Bug**, **Feature Request** ou **Feedback**.
+### Fonctions principales :
+- ✍️ **Génération de User Stories** (titre, description, critères d’acceptation, complexité)
+- 🚦 **Priorisation du backlog** via **MoSCoW** et **RICE**
+- 📬 **Analyse automatique des feedbacks** et classification en `Bug`, `Feature Request`, ou `Feedback`
 
-L’ensemble est propulsé par **n8n** et **OpenAI**, avec une interface pilotée via **Airtable**.
+🧠 Propulsé par **n8n**, **OpenAI API**, et **Airtable** en guise d’interface utilisateur.
 
 ---
 
-## 🛠️ Architecture
+## 🛠️ Architecture & Stack
 
 ### 🧩 Stack Technique
-- `n8n` – Moteur d’orchestration no-code
-- `Airtable` – Front-end léger, base de données collaborative et formulaire de feedbakcs clients. voici l'accès à la base donné https://airtable.com/appdbdWixyLMElhAH/shrX1YU7wWhg9DkuJ
-- `OpenAI API` – Intelligence de génération et d’analyse
-- `Gmail` – Source de données pour les feedbacks clients
 
-### 🔗 Interfaces clés dans Airtable
-- **Brief** : déclenche la génération de stories à partir du brief client
-- **Projet** : lance la priorisation des features associées
-- **Feedback** : centralise les retours analysés automatiquement
-- **MoSCoW Prioritization** : Visualise les priorisations des features
+- `n8n` : moteur d’orchestration no-code
+- `Airtable` : interface de saisie + base de données collaborative  
+  🔗 [Accès à la base (lecture seule)](https://airtable.com/appdbdWixyLMElhAH/shrX1YU7wWhg9DkuJ)
+- `OpenAI API` : génération de texte & analyse sémantique
+- `Gmail` : source de feedbacks clients (mail scraping)
 
-En vu des limitation sur Airtable un accès complet avec la possibilité de modifier ne peut être données qu'aux collaborateurs du workspace ( payant ), si vous voulez y accéder n'hésitez pas à me le demander.
+> ⚠️ **Note** : en raison des limitations Airtable, un accès complet nécessite une invitation au workspace. Me contacter pour y accéder.
 
 ---
 
 ## ⚙️ Workflows IA
 
 ### 1. ✍️ Génération assistée de User Stories
-**Déclencheur :** script depuis l’onglet **Brief**
 
-Fonctions :
-- Génération structurée de stories (titre, description, critères)
-- Estimation automatisée de la complexité (XS → XL)
-- Association automatique au projet parent
-- Synthèse d’une **vision produit mobilisatrice**
+📍 Déclenchement : depuis l’onglet **Brief** dans Airtable  
+📌 [Accès lecture seule](https://airtable.com/appdbdWixyLMElhAH/shr61nuyOpT0LW8ZC?Bm7FO=recC7u336r20vEihL)
 
-📌 `https://airtable.com/appdbdWixyLMElhAH/shr61nuyOpT0LW8ZC?Bm7FO=recC7u336r20vEihL  ( Lecture seule ).`
+**Fonctionnalités :**
+- Génération automatique (titre, description, critères)
+- Complexité estimée (XS → XL)
+- Liée automatiquement au projet concerné
+- Formulation d’une **vision produit** claire et mobilisatrice
 
-Chaque projet peut avoir plusieuers brief et sur la base de chaque brief client nous pouvons générer les User Stories.
+📸 Exemple de processus :
 
-Ici on lance le process de "Assisted Writing"
+![Assisted Writing Trigger](https://github.com/user-attachments/assets/fd6a2fe1-d05b-4008-bf6e-9d75818330ce)
 
+![Script Airtable](https://github.com/user-attachments/assets/4f085b61-994a-4968-804e-c2c53bdc1340)
 
-![image](https://github.com/user-attachments/assets/fd6a2fe1-d05b-4008-bf6e-9d75818330ce)
+![n8n Workflow](https://github.com/user-attachments/assets/75fa5f9f-c864-49ff-ad5c-37e658506ac0)
 
-L'automation via Script sur Airtable :
+📬 À la fin du process, le PO reçoit une confirmation par mail :  
+![Mail Confirmation](https://github.com/user-attachments/assets/6522dc03-4008-4202-b76b-cb618d3aef0d)
 
-![image](https://github.com/user-attachments/assets/4f085b61-994a-4968-804e-c2c53bdc1340)
+🧾 Résultat en base Airtable :  
+![Résultat 1](https://github.com/user-attachments/assets/c3ab484f-f372-4e3b-9554-4d5027464b3e)  
+![Résultat 2](https://github.com/user-attachments/assets/7b9f9659-1aa6-4ec5-93f0-fbb9bbcf85ad)
 
-
-Le Script Airtable pour déclencher le workflow de n8n : 
-
-![image](https://github.com/user-attachments/assets/f83792c2-fa73-4314-b237-d55c233fd6a2)
-
-
-
-
-Ici le workflow : 
-
-![image](https://github.com/user-attachments/assets/75fa5f9f-c864-49ff-ad5c-37e658506ac0)
-
-
-
-Dès que le workflow est terminé le PO en charge du projet reçoit un mail de confirmation : 
-
-![image](https://github.com/user-attachments/assets/6522dc03-4008-4202-b76b-cb618d3aef0d)
-
-
-
-
-Ici le résultat : 
-
-![image](https://github.com/user-attachments/assets/c3ab484f-f372-4e3b-9554-4d5027464b3e)
-
-
-![image](https://github.com/user-attachments/assets/7b9f9659-1aa6-4ec5-93f0-fbb9bbcf85ad)
-
-
-* Note importante : pour ne pas mettre en erreur le PO j'ai mis deux cases pour prévenir comme quoi la user story a été créée par l'IA et une case pour confirmer que cela a été vérifié par le PO
+> 💡 Astuce UX : un champ "🧠 IA" + un champ "✅ Validé PO" permettent de distinguer ce qui a été généré automatiquement de ce qui a été revu.
 
 ---
 
 ### 2. 🚦 Priorisation intelligente du backlog
-**Déclencheur :** clic depuis l’onglet **Projet**
 
-Fonctions :
-- Lecture du backlog lié
-- Application stricte de la méthode **MoSCoW** (via LLM)
-- Estimation de **Reach** & **Impact** (RICE)
-- Explication contextuelle de la priorité attribuée
+📍 Déclenchement : clic dans l’onglet **Projet**  
+📌 [Interface Airtable](https://airtable.com/appdbdWixyLMElhAH/shrruPyt9kQdQP9rm)
 
-  * Note important : le C & le E de RICE ne peut pas être délégué à l'IA car il s'agit d'une estimation subjective du PO et de son équipe de développement donc je laisse le remplissage de cette donné au PO
+**Fonctionnalités :**
+- Lecture automatique du backlog
+- Application stricte de la méthode **MoSCoW**
+- Calcul du **Reach** & **Impact** pour RICE  
+- Attribution de priorité justifiée et expliquée
 
-📌 `(https://airtable.com/appdbdWixyLMElhAH/shrruPyt9kQdQP9rm)`
+> ⚠️ Seules les valeurs **C** (Confiance) & **E** (Effort) de RICE restent à compléter manuellement par le PO
 
-![image](https://github.com/user-attachments/assets/801aa64f-9906-46e0-a507-6f3d3106b8a0)
+📸 Aperçus :
 
-
-
-Ici le résultat : 
-
-![image](https://github.com/user-attachments/assets/080f0798-dfbc-498f-8e78-9909e3c77027)
-
+![Déclenchement Projet](https://github.com/user-attachments/assets/fa9f90ae-773a-456f-bbe2-0565b75145ab)  
+![Script Airtable](https://github.com/user-attachments/assets/3ba90254-8f43-498f-a358-8ca8610d4deb)  
+![Workflow n8n](https://github.com/user-attachments/assets/801aa64f-9906-46e0-a507-6f3d3106b8a0)
 
 ---
 
-### 3. 📬 Analyse des Feedbacks
-**Déclencheur :** emails entrants ou formulaire externe
+### 3. 📬 Analyse automatisée des feedbacks
 
-Fonctions :
-- Scraping intelligent du contenu de mail toutes les heures
-- Classification sémantique stricte : `Bug`, `Feature Request`, `Feedback`, ou `Hors Sujet`
-- Extraction des données clés (contact, projet, contenu)
-- Intégration dans la table **Feedbacks**
-- Intégration des Feedbacks via Formulaire donné aux clients 
+📍 Déclencheurs :
+- Emails reçus via Gmail
+- Formulaire client
+- Saisie manuelle par le PO
 
-📌 `[Lien Airtable à insérer – Feedback]`
+📌 Trois méthodes de collecte :
+1. **Formulaire client**  
+   ![Formulaire client](https://github.com/user-attachments/assets/15172bb9-c7e5-4da8-8327-6311052db3a9)  
+   ![Interface](https://github.com/user-attachments/assets/75447c5a-53b3-4501-a75b-c82f29ea2abb)
 
+2. **Feedback direct par PO**
 
+3. **Scraping d'emails entrants via Gmail + IA**  
+   ![Email Parsing](https://github.com/user-attachments/assets/215949c4-ea52-46ff-a454-91ba213f36e8)
+
+**Fonctionnalités :**
+- Classification sémantique : `Bug`, `Feature Request`, `Feedback`, `Hors Sujet`
+- Extraction automatique des infos clés (contact, projet, contenu)
+- Ajout dans la table Feedbacks
 
 ---
 
-## 🧪 Guide de test
+## 🧪 Guide de Test
 
-1. 🧾 Saisir un **brief** client dans Airtable
-2. 📊 Ouvrir le projet et lancer la **priorisation automatique**
-3. 📩 Envoyer un email à la boîte configurée pour test
-4. 🌍 (Optionnel) Soumettre une demande via le **formulaire public**
+1. 🧾 Ajouter un **brief client** dans Airtable  
+2. ✍️ Lancer le **processus de génération** dans l’onglet Brief  
+3. 🚦 Lancer la **priorisation** dans l’onglet Projet  
+4. 📩 Envoyer un email ou remplir un formulaire pour tester l’analyse feedback  
+5. 🌐 (Optionnel) Tester le **formulaire client public**
 
 ---
 
 ## 📚 Détails Techniques
-- RICE : seuls **R** et **I** sont calculés par l’IA ; **C** et **E** sont à compléter manuellement
-- La Vision Produit suit un format actionnable :
-  > "Notre produit [type de solution] aide [utilisateur] à [transformation], en leur fournissant [valeurs clés]. Contrairement à [alternative], notre produit permet [bénéfice différenciant]."
-- Lien entre projet et backlog géré par `recordId` sécurisé dans chaque scénario
+
+- 🔢 RICE : `Reach` et `Impact` sont automatisés. `Confidence` & `Effort` sont manuels.
+- 🧭 Vision Produit :  
+  > *Notre produit [type de solution] aide [utilisateur] à [transformation], en leur fournissant [valeurs clés]. Contrairement à [alternative], notre produit permet [bénéfice différenciant].*
+- 🔒 Gestion sécurisée via `recordId` pour relier les entités
+- 🔐 Accès restreint à Airtable : me contacter avec votre email pour une invitation
 
 ---
 
-## 🧠 Pistes d'Amélioration
-- [ ] Ajouter une **vidéo de démonstration** ou animation GIF
-- [ ] Améliorer l’expérience sur le **formulaire utilisateur**
-- [ ] Intégrer une **réponse automatique personnalisée** par email
+## 🧠 Pistes d’Amélioration
+
+- [ ] Refonte UI/UX pour un parcours plus fluide
+- [ ] Déplacement des déclencheurs IA hors d’Airtable (limites UI)
+- [ ] Réponse automatique par mail post-priorisation
+- [ ] Système de log d’historique IA par projet
 
 ---
 
 ## 👤 Auteur
-Projet conçu par **Saad**, ingénieur efficacité énergétique & Product Builder IA / No-Code 🚀
 
-💡 N’hésitez pas à fork, tester ou collaborer !
+Développé par **Saad**  
+Ingénieur efficacité énergétique & Product Builder IA / No-Code 🚀
+
+📬 Envie de contribuer, forker ou juste discuter ?  
+N’hésite pas à me ping !
 
 ---
 
-> "Build once. Scale endlessly."
+> *"Build once. Scale endlessly."*
