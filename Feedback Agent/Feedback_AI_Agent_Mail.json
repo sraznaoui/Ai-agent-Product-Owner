@@ -1,0 +1,359 @@
+{
+  "name": "Feedback AI Agent Mail",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d78fec5c-d85f-4a13-bf74-b0a2b23f8b40",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GGyMWKjwlnRhTACZ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.snippet }} {{ $json.From }}"
+            },
+            {
+              "content": "# T'es un Assitant mail pour un product Owner t'es en charge d'analyser rapidement le contenu des mails que le user va t'envoyer afin de détecter si un client nous a envoyé un mail concernant un de ces 3 sujets : \n\n* Feature Request\n* Reporter un Bugg\n* Feedback \n\n# Ta réponse doit être uniquement un de ces 3 : \n\nFeatureRequest\nBug Report\nFeedback\n\nSi le mail n'a aucune relation avec ces sujets fait moi un retour avec : \n\nHors-Sujet\n\n# Projet : \n\nSi l'utilisateur précise le projet, il faut extraire nom du projet \n\nNom du projet : \n\n\nSi c'est vide écrire nom de projet non communiqué.\n\n# Output : \n\nSortir la réponse en JSON, je veux les données suivantes : \n\nEtat :  ( les 4 états que je t'ai transmis ) \nNom du projet : \nNom : \nPrénom : \nMail : \nExplication : \n\n\nSi c'est vide réponds empty\n\n# Disclaimer : Une boite de messagerie pourra être rempli de d'autres messages publicitaire avec le mot feedback ou Request ou bugg ou reporter bugg, tu vas devoir être très selectif, et essayer de comprendre s'il y'a quelqu'un qui cherche à nous reporter un bugg ou qui nous donne un feedback ou qui demande une feature par rapport à un projet qu'on gère. \n\n\n\n",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        0
+      ],
+      "id": "83037d50-0352-4a66-bff5-706ce9f47403",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "nEUxMYfTBw9JTeMf",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ef28b732-cfd6-4905-942b-22989013598c",
+                    "leftValue": "={{ $json.responseJSON.Etat }}",
+                    "rightValue": "Hors-Sujet",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c0de5fb5-1d69-47fd-9d1e-ea46e093ce32",
+                    "leftValue": "={{ $json.responseJSON.Etat }}",
+                    "rightValue": "Hors-Sujet",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        700,
+        0
+      ],
+      "id": "4c55d138-1c79-4ed8-b560-645ea782ab95",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appdbdWixyLMElhAH",
+          "mode": "list",
+          "cachedResultName": "AI Product Owner",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblnnnN29qHueSPgj",
+          "mode": "list",
+          "cachedResultName": "Feedbacks",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH/tblnnnN29qHueSPgj"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "First Name": "={{ $json.responseJSON['Prénom'] }}",
+            "Last Name": "={{ $json.responseJSON.Nom }}",
+            "Email": "={{ $json.responseJSON.Mail }}",
+            "TypeOfRequest": "={{ $json.responseJSON.Etat }}",
+            "Explain Your Request": "={{ $json.responseJSON.Explication }}",
+            "NomProjetClient": "={{ $json.responseJSON['Nom du projet'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "TypeOfRequest",
+              "displayName": "TypeOfRequest",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "FeatureRequest",
+                  "value": "FeatureRequest"
+                },
+                {
+                  "name": "Bug Report",
+                  "value": "Bug Report"
+                },
+                {
+                  "name": "Other",
+                  "value": "Other"
+                },
+                {
+                  "name": "Feedback",
+                  "value": "Feedback"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Explain Your Request",
+              "displayName": "Explain Your Request",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "NomProjetClient",
+              "displayName": "NomProjetClient",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Projet",
+              "displayName": "Projet",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Name (from Projet)",
+              "displayName": "Name (from Projet)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        -60
+      ],
+      "id": "04837d02-8d22-4b48-b359-fb148e5bb993",
+      "name": "Airtable",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "0CVaF9yaQwiPqAsW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawContent = $json.message.content;\n\n// Si c’est une string avec des \\n, \\\", etc., on essaie de la parser proprement :\nconst cleanContent = JSON.parse(rawContent);\n\nreturn {\n  responseJSON: cleanContent\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        20
+      ],
+      "id": "574d7566-d71a-4885-ac7f-e4fc44a7f98d",
+      "name": "Code1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        []
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "70461f86-761c-4add-b217-cd13302641ed",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1148135d8af09935f1fbc9043e7cde1c4aacf716a7ce6f442c7af6891f4db26e"
+  },
+  "id": "GZQ4FrikHQhD2pPx",
+  "tags": []
+}
