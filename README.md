@@ -131,6 +131,7 @@ Ce projet est un **agent intelligent** conçu pour assister les Product Owners d
 - [ ] Déplacement des déclencheurs IA hors d’Airtable (limites UI)
 - [ ] Réponse automatique par mail post-priorisation
 - [ ] Système de log d’historique IA par projet
+- [ ] Utiliser LangChain & Langrahp pour exploiter les agents swarms & Base de données vectorielles.
 
 ---
 
