@@ -1,124 +1,132 @@
-# Ai-agent-Product-Owner
+# 🤖 AI-Agent Product Owner
 
-🤖 Assistant IA pour Product Owner
+## 🧭 Présentation Générale
+Ce projet a été conçu comme un agent intelligent au service des Product Owners d’une plateforme SaaS de gestion de projet. L’objectif : soulager le PO de la surcharge opérationnelle.
 
-🧭 Présentation Générale
+🛠 Il orchestre trois missions fondamentales :
 
-Ce projet a été réalisé dans le cadre d’un test technique visant à créer un assistant intelligent pour les Product Owners d’une plateforme SaaS de gestion de projet. L’agent IA automatise plusieurs tâches clés :
+- ✍️ Générer des **User Stories** enrichies (titre, description, critères, complexité)
+- 🚦 Prioriser les éléments du backlog via les frameworks **MoSCoW** & **RICE** (Reach & Impact uniquement)
+- 📬 Classifier automatiquement les mails entrants en **Bug**, **Feature Request** ou **Feedback**.
 
-✍️ Rédaction de User Stories, Critères d’acceptation, et estimation de la Complexité
+L’ensemble est propulsé par **n8n** et **OpenAI**, avec une interface pilotée via **Airtable**.
 
-🚦 Priorisation des éléments du backlog selon les méthodes MoSCoW et RICE
+---
 
-📬 Analyse automatique des feedbacks et catégorisation des mails reçus
+## 🛠️ Architecture
 
-Le tout est orchestré via des scénarios n8n, avec une interface 100 % pilotée via Airtable.
+### 🧩 Stack Technique
+- `n8n` – Moteur d’orchestration no-code
+- `Airtable` – Front-end léger, base de données collaborative et formulaire de feedbakcs clients.
+- `OpenAI API` – Intelligence de génération et d’analyse
+- `Gmail` – Source de données pour les feedbacks clients
 
-🛠️ Architecture
+### 🔗 Interfaces clés dans Airtable
+- **Brief** : déclenche la génération de stories à partir du brief client
+- **Projet** : lance la priorisation des features associées
+- **Feedback** : centralise les retours analysés automatiquement
+- **MoSCoW Prioritization** : Visualise les priorisations des features
 
-🧩 Outils Utilisés
+En vu des limitation sur Airtable un accès complet avec la possibilité de modifier ne peut être données qu'aux collaborateurs du workspace ( payant ), si vous voulez y accéder n'hésitez pas à me le demander.
 
-n8n – Moteur d’automatisation
+---
 
-Airtable – Interface utilisateur & base de données
+## ⚙️ Workflows IA
 
-OpenAI API – Génération & interprétation de texte (LLM agent)
+### 1. ✍️ Génération assistée de User Stories
+**Déclencheur :** script depuis l’onglet **Brief**
 
-Gmail – Entrée via trigger de boîte mail
+Fonctions :
+- Génération structurée de stories (titre, description, critères)
+- Estimation automatisée de la complexité (XS → XL)
+- Association automatique au projet parent
+- Synthèse d’une **vision produit mobilisatrice**
 
-🔗 Interfaces Airtable
+📌 `https://airtable.com/appdbdWixyLMElhAH/shr61nuyOpT0LW8ZC?Bm7FO=recC7u336r20vEihL  ( Lecture seule ).`
 
-Onglet Brief – Lance la génération des user stories à partir du brief client
+Chaque projet peut avoir plusieuers brief et sur la base de chaque brief client nous pouvons générer les User Stories.
 
-Onglet Projet – Lance la priorisation des fonctionnalités du backlog
+Ici on lance le process de "Assisted Writing"
 
-Table Feedback – Centralise les feedbacks analysés par l’agent IA
 
-Formulaire externe – Permet aux utilisateurs de soumettre des demandes manuellement
+![image](https://github.com/user-attachments/assets/fd6a2fe1-d05b-4008-bf6e-9d75818330ce)
 
-⚙️ Workflows
 
-1. ✍️ Agent IA – Rédaction Assistée
+Ici le workflow : 
 
-Déclencheur : Script manuel depuis l’onglet “Brief” d’Airtable
-
-Fonctionnalités :
-
-Génère des User Stories avec Titre, Description, Critères d’acceptation
-
-Fournit une estimation de complexité (T-Shirt Sizing : XS à XL)
-
-Lie automatiquement chaque user story à son projet dans Airtable
-
-Génère une Vision Produit concise et mobilisatrice
-
-📌 Lien Airtable à insérer ici → [Lien vers Airtable - Vue Brief]
-
-📸 [INSÉRER IMAGE : capture du workflow et du rendu Airtable]
-
-2. 🚦 Agent IA – Priorisation
-
-Déclencheur : Action manuelle depuis l’onglet “Projet”
-
-Fonctionnement :
-
-Récupère les éléments du backlog liés à un projet
-
-Applique MoSCoW + estimation partielle RICE (Reach et Impact seulement)
-
-Laisse Confidence et Effort au soin du PO ou de l’équipe technique
-
-Explique la logique de priorisation et met à jour Airtable
-
-📌 Lien Airtable à insérer ici → [Lien vers Airtable - Vue Priorisation]
-
-📸 [INSÉRER IMAGE : logiques de priorisation ou sortie]
-
-3. 📬 Agent IA – Feedback
-
-Déclencheur : Boîte Gmail + formulaire Airtable optionnel
-
-Fonctionnalités :
-
-Analyse automatique des mails toutes les heures
-
-Détecte si le message est un Bug, une Feature Request, ou un Feedback
-
-Extrait les informations importantes : nom, prénom, projet, email, explication
-
-Filtre les spams et contenus hors-sujet grâce à un prompt strict
-
-Alimente la table "Feedbacks" dans Airtable
-
-📌 Lien Airtable à insérer ici → [Lien vers Airtable - Feedback]
-
-📸 [INSÉRER IMAGE : feedback analysé dans Airtable]
-
-🧪 Comment Tester l’Agent
-
-🧾 Créer un brief projet dans Airtable > lancer le workflow de rédaction
-
-📊 Accéder au projet correspondant > lancer la priorisation
-
-📩 Envoyer un mail à la boîte Gmail liée et vérifier le traitement
-
-🧠 (Optionnel) Soumettre une demande via le formulaire Airtable
-
-📚 Notes Techniques
-
-Le modèle RICE est partiellement automatisé (R + I uniquement)
-
-La Vision Produit est générée selon un template inspiré des meilleures pratiques produit (ex. Marty Cagan)
-
-Le lien projet/story est assuré par un identifiant de projet (recordId)
-
-📎 Améliorations Possibles
+![image](https://github.com/user-attachments/assets/75fa5f9f-c864-49ff-ad5c-37e658506ac0)
 
 
 
-📩 Auteur
+Ici le résultat : 
 
-Réalisé par Saad – Ingénieur orienté produit, passionné de No-Code et d’IA 🧠⚡️
+![image](https://github.com/user-attachments/assets/c3ab484f-f372-4e3b-9554-4d5027464b3e)
 
-🚀 N'hésitez pas à cloner, améliorer ou me contacter sur LinkedIn !
 
+![image](https://github.com/user-attachments/assets/7b9f9659-1aa6-4ec5-93f0-fbb9bbcf85ad)
+
+
+---
+
+### 2. 🚦 Priorisation intelligente du backlog
+**Déclencheur :** clic depuis l’onglet **Projet**
+
+Fonctions :
+- Lecture du backlog lié
+- Application stricte de la méthode **MoSCoW** (via LLM)
+- Estimation de **Reach** & **Impact** (RICE)
+- Explication contextuelle de la priorité attribuée
+
+📌 `(https://airtable.com/appdbdWixyLMElhAH/shrruPyt9kQdQP9rm)`
+
+📸 *[INSÉRER IMAGE : sortie RICE ou classement backlog]*
+
+---
+
+### 3. 📬 Analyse des Feedbacks
+**Déclencheur :** emails entrants ou formulaire externe
+
+Fonctions :
+- Scraping intelligent du contenu de mail toutes les heures
+- Classification sémantique stricte : `Bug`, `Feature Request`, `Feedback`, ou `Hors Sujet`
+- Extraction des données clés (contact, projet, contenu)
+- Intégration dans la table **Feedbacks**
+
+📌 `[Lien Airtable à insérer – Feedback]`
+
+📸 *[INSÉRER IMAGE : ligne analysée dans Airtable]*
+
+---
+
+## 🧪 Guide de test
+
+1. 🧾 Saisir un **brief** client dans Airtable
+2. 📊 Ouvrir le projet et lancer la **priorisation automatique**
+3. 📩 Envoyer un email à la boîte configurée pour test
+4. 🌍 (Optionnel) Soumettre une demande via le **formulaire public**
+
+---
+
+## 📚 Détails Techniques
+- RICE : seuls **R** et **I** sont calculés par l’IA ; **C** et **E** sont à compléter manuellement
+- La Vision Produit suit un format actionnable :
+  > "Notre produit [type de solution] aide [utilisateur] à [transformation], en leur fournissant [valeurs clés]. Contrairement à [alternative], notre produit permet [bénéfice différenciant]."
+- Lien entre projet et backlog géré par `recordId` sécurisé dans chaque scénario
+
+---
+
+## 🧠 Pistes d'Amélioration
+- [ ] Ajouter une **vidéo de démonstration** ou animation GIF
+- [ ] Améliorer l’expérience sur le **formulaire utilisateur**
+- [ ] Intégrer une **réponse automatique personnalisée** par email
+
+---
+
+## 👤 Auteur
+Projet conçu par **Saad**, ingénieur efficacité énergétique & Product Builder IA / No-Code 🚀
+
+💡 N’hésitez pas à fork, tester ou collaborer !
+
+---
+
+> "Build once. Scale endlessly."
