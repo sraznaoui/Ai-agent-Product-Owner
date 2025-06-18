@@ -1,0 +1,841 @@
+{
+  "name": "AI Agent Assisted writing",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "303b65ea-1c46-4a4c-b482-2c39985f21d0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        -80
+      ],
+      "id": "d27b4807-4050-49a5-97ab-f0f3e06004b9",
+      "name": "Webhook",
+      "webhookId": "303b65ea-1c46-4a4c-b482-2c39985f21d0"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "base": {
+          "__rl": true,
+          "value": "={{ $json[\"query\"][\"baseId\"] }}\n",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "={{ $json[\"query\"][\"tableId\"] }}",
+          "mode": "id"
+        },
+        "id": "={{ $json[\"query\"][\"recordId\"] }}",
+        "options": {
+          "downloadFields": "="
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        140,
+        -80
+      ],
+      "id": "49e13e14-6f61-40ba-9c6c-5694d5f5e4f8",
+      "name": "Airtable1",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "0CVaF9yaQwiPqAsW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "assistant",
+        "assistantId": {
+          "__rl": true,
+          "value": "asst_hIrLu8cwJBapX8kAxdUosO9A",
+          "mode": "list",
+          "cachedResultName": "UserStories"
+        },
+        "prompt": "define",
+        "text": "={{ $json['Brief Complet'] }}",
+        "memory": "=",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        460,
+        -80
+      ],
+      "id": "2c994e48-ada6-46a0-b265-e4b890d5e868",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "nEUxMYfTBw9JTeMf",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## ✍🏻 Workflow d'assistance à l'écriture\n1.Users Stories\n2.Critères d'acceptations\n3.Estimation de la complexité ⚡️\n\n",
+        "height": 620,
+        "width": 1540,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -172,
+        -220
+      ],
+      "typeVersion": 1,
+      "id": "20342274-54be-4244-b9ec-adb49d8a2177",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "responseJSON",
+              "value": "={{JSON.parse($json.output)}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c199837c-634e-4f48-8739-62953d705f35",
+      "name": "Parse JSON",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        840,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appdbdWixyLMElhAH",
+          "mode": "list",
+          "cachedResultName": "AI Product Owner",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblpewF69e3tIQmob",
+          "mode": "list",
+          "cachedResultName": "Backlog",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH/tblpewF69e3tIQmob"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "MoSCoW": "A traiter",
+            "Titre": "={{ $('Item Lists').item.json.Titre }}",
+            "Type": "UserStory",
+            "Description": "={{ $('Item Lists').item.json.Description }}",
+            "Critères d'acceptation": "={{ $('Item Lists').item.json['Critères d\\'acceptation'] }}",
+            "Projet_Liée": "={{ [ $json.query.projetId ] }}",
+            "Complexité Estimation": "={{ $('Item Lists').item.json['Complexité'] }}",
+            "Date Creation": "={{ new Date().toISOString() }}",
+            "Généré par l'IA": "Oui",
+            "Revu par un PO": "Non"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Titre",
+              "displayName": "Titre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Projet_Liée",
+              "displayName": "Projet_Liée",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "UserStory",
+                  "value": "UserStory"
+                },
+                {
+                  "name": "Bug",
+                  "value": "Bug"
+                },
+                {
+                  "name": "Tech Task",
+                  "value": "Tech Task"
+                },
+                {
+                  "name": "Feature Request",
+                  "value": "Feature Request"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Critères d'acceptation",
+              "displayName": "Critères d'acceptation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Complexité Estimation",
+              "displayName": "Complexité Estimation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "XS",
+                  "value": "XS"
+                },
+                {
+                  "name": "S",
+                  "value": "S"
+                },
+                {
+                  "name": "M",
+                  "value": "M"
+                },
+                {
+                  "name": "L",
+                  "value": "L"
+                },
+                {
+                  "name": "XL",
+                  "value": "XL"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Date Creation",
+              "displayName": "Date Creation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Généré par l'IA",
+              "displayName": "Généré par l'IA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Oui",
+                  "value": "Oui"
+                },
+                {
+                  "name": "Non",
+                  "value": "Non"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Revu par un PO",
+              "displayName": "Revu par un PO",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Oui",
+                  "value": "Oui"
+                },
+                {
+                  "name": "Non",
+                  "value": "Non"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "MoSCoW",
+              "displayName": "MoSCoW",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Must-have",
+                  "value": "Must-have"
+                },
+                {
+                  "name": "Should-have",
+                  "value": "Should-have"
+                },
+                {
+                  "name": "Could-have",
+                  "value": "Could-have"
+                },
+                {
+                  "name": "Will not have",
+                  "value": "Will not have"
+                },
+                {
+                  "name": "A traiter",
+                  "value": "A traiter"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        140,
+        160
+      ],
+      "id": "039766ec-d9f8-4591-8d45-d6ff1528bb77",
+      "name": "Airtable",
+      "alwaysOutputData": false,
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "0CVaF9yaQwiPqAsW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "responseJSON",
+        "options": {}
+      },
+      "id": "1ba6fe3e-fb7f-4864-a423-677b6c3b9d87",
+      "name": "Item Lists",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        1140,
+        -80
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e69eb99a-3d01-4f03-b3b9-e4cb0f4986bc",
+              "name": "query.projetId",
+              "value": "={{ $('Webhook').item.json.query.projetId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        160
+      ],
+      "id": "24a0cacd-e013-43fb-b8be-bff61b2e3fcc",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Airtable1').item.json['Brief Complet'] }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Tu es un expert en stratégie produit, spécialisé en Product Management pour des startups SaaS. Ton rôle est d’analyser le brief  suivant d'un projet et d’en extraire une Vision Produit claire, concise et mobilisatrice, permettant au Product Owner de prioriser efficacement le développement.  Voici ce que tu dois faire :  Lis attentivement le brief ci-dessous.  Analyse les enjeux utilisateurs, objectifs business, et le contexte du projet.  En te basant sur ces éléments, rédige une Vision Produit selon ce format : \n\nNotre produit [type de solution] aide [utilisateurs cibles] à [résultat ou transformation apportée], en leur fournissant [éléments de valeur ou solutions clés]. Contrairement à [alternative ou problème existant], notre produit permet [bénéfice différenciant].\n\nAssure toi que la vision soit une phrase courte, pas un grand paragraphe. inspire toi des phrases vision product."
+            },
+            {
+              "type": "AIMessagePromptTemplate",
+              "message": "Notre produit [type de solution] aide [utilisateurs cibles] à [résultat ou transformation apportée], en leur fournissant [éléments de valeur ou solutions clés]. Contrairement à [alternative ou problème existant], notre produit permet [bénéfice différenciant]."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        480,
+        160
+      ],
+      "id": "76e58c77-5fb5-40d8-82c1-a2e9a241ec15",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        540,
+        280
+      ],
+      "id": "f4495b51-61ba-417a-9c7c-37cdd5f04842",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "nEUxMYfTBw9JTeMf",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1cce7041-6645-4d90-8381-3b87ae6b6a00",
+              "name": "Brief Complet",
+              "value": "={{ $('Airtable1').item.json['Brief Complet'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        160
+      ],
+      "id": "cf37af38-936c-4384-be36-257f770e5756",
+      "name": "Edit Fields1",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appdbdWixyLMElhAH",
+          "mode": "list",
+          "cachedResultName": "AI Product Owner",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblRcTdX1LCY485J8",
+          "mode": "list",
+          "cachedResultName": "Projet",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH/tblRcTdX1LCY485J8"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Webhook').item.json.query.projetId }}",
+            "Vision Produit": "={{ $json.text }}",
+            "StatutVisionProduit": "Généré par l'IA"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Briefs",
+              "displayName": "Briefs",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Vision Produit",
+              "displayName": "Vision Produit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "StatutVisionProduit",
+              "displayName": "StatutVisionProduit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Généré par l'IA",
+                  "value": "Généré par l'IA"
+                },
+                {
+                  "name": "Revu & Validé par le PO",
+                  "value": "Revu & Validé par le PO"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Feedbacks",
+              "displayName": "Feedbacks",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Backlog",
+              "displayName": "Backlog",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "MailPO",
+              "displayName": "MailPO",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "RecordIdprojet",
+              "displayName": "RecordIdprojet",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        160
+      ],
+      "id": "f8b24077-2ecd-4dc6-8e86-491ff0f84bef",
+      "name": "Airtable2",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "0CVaF9yaQwiPqAsW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "base": {
+          "__rl": true,
+          "value": "appdbdWixyLMElhAH",
+          "mode": "list",
+          "cachedResultName": "AI Product Owner",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblRcTdX1LCY485J8",
+          "mode": "list",
+          "cachedResultName": "Projet",
+          "cachedResultUrl": "https://airtable.com/appdbdWixyLMElhAH/tblRcTdX1LCY485J8"
+        },
+        "id": "={{ $('Webhook').item.json.query.projetId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        980,
+        160
+      ],
+      "id": "58f24b49-cb9d-4484-b1b0-1ec69e88ed72",
+      "name": "Airtable3",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "0CVaF9yaQwiPqAsW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.MailPO }}",
+        "subject": "={ {{ $json.Name }} } Votre vision produit et vos user stories sont prêtes – en attente de validation 🚦 ",
+        "message": "=<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Notification - User Stories & Vision Produit</title>\n</head>\n<body style=\"font-family: Arial, sans-serif; background-color: #f2f4f7; margin: 0; padding: 0;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n    <tr>\n      <td align=\"center\">\n        <table width=\"600\" cellpadding=\"20\" cellspacing=\"0\" style=\"background-color: #ffffff; margin-top: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);\">\n          <tr>\n            <td>\n              <h2 style=\"margin-top: 0; color: #333;\">🚀 Vision Produit & User Stories générées</h2>\n              <p style=\"color: #333; font-size: 16px;\">\n                Bonjour 👋,\n              </p>\n              <p style=\"color: #333; font-size: 16px;\">\n                Le workflow de génération a bien été exécuté.\n              </p>\n              <p style=\"color: #333; font-size: 16px;\">\n                👉 La <strong>vision produit</strong> et les <strong>user stories</strong> sont désormais prêtes et <strong>en attente de votre validation</strong>.\n              </p>\n              <p style=\"color: #333; font-size: 16px;\">\n                Cliquez ci-dessous pour consulter les résultats :\n              </p>\n              <p style=\"text-align: center; margin: 30px 0;\">\n                <a href=\"https://airtable.com/appdbdWixyLMElhAH/tblpewF69e3tIQmob/viw7Xf9ereiXaRqyR?blocks=hide\" \n                   style=\"background-color: #fffae5; color: #000000; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 10px; border: 1px solid #e2e2e2;\">\n                  <img src=\"https://static-00.iconduck.com/assets.00/airtable-icon-2048x1714-idz9zb6h.png\" alt=\"Airtable Logo\" width=\"24\" height=\"20\" style=\"vertical-align: middle;\">\n                  Accéder à Airtable\n                </a>\n              </p>\n              <p style=\"color: #888; font-size: 13px;\">\n                Ce mail est généré automatiquement. Si vous avez une question, n’hésitez pas à répondre ou contacter l’équipe produit.\n              </p>\n            </td>\n          </tr>\n          <tr>\n            <td align=\"center\" style=\"border-top: 1px solid #e0e0e0; font-size: 12px; color: #aaa;\">\n              Assistant IA Produit – n8n Automation · 2025\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1160,
+        160
+      ],
+      "id": "99ba56a8-92eb-4809-8422-f46f01566525",
+      "name": "Gmail",
+      "webhookId": "fb18bfc2-c713-4e89-8a2b-722789a661c7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GGyMWKjwlnRhTACZ",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Airtable1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Parse JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse JSON": {
+      "main": [
+        [
+          {
+            "node": "Item Lists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item Lists": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Airtable2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable2": {
+      "main": [
+        [
+          {
+            "node": "Airtable3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable3": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0c13d9d2-a86c-4c90-94e9-b4806f353180",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1148135d8af09935f1fbc9043e7cde1c4aacf716a7ce6f442c7af6891f4db26e"
+  },
+  "id": "ctutwk7egvZkzhXC",
+  "tags": []
+}
